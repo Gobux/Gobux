@@ -1,0 +1,60 @@
+/* ================== Bills table compact + scroll + highlight (drop-in) ================== */
+
+/* Scroll container (the JS will wrap your table in this div) */
+#bills-table-wrap {
+  max-height: 60vh;             /* contained space */
+  overflow: auto;               /* scroll when long */
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  background: #fff;
+}
+
+/* Sticky header so labels remain visible while scrolling */
+#bills-table thead th {
+  position: sticky;
+  top: 0;
+  background: #fff;
+  z-index: 1;
+  box-shadow: 0 1px 0 rgba(0,0,0,.06);
+}
+
+/* Tighter rows */
+#bills-table th,
+#bills-table td {
+  padding: 6px 10px;            /* compact */
+  line-height: 1.25;
+  vertical-align: middle;
+  font-size: 14px;
+}
+
+/* Small buttons inside the table */
+#bills-table .btn,
+#bills-table button {
+  padding: 6px 10px;
+  font-size: 13px;
+  min-height: 32px;
+}
+
+/* Zebra (optional) */
+#bills-table tbody tr:nth-child(odd) {
+  background: #fafafa;
+}
+
+/* Highlight for bills due this fortnight */
+#bills-table tbody tr.due-fortnight {
+  background: #e9f9ea !important;  /* soft green */
+}
+#bills-table tbody tr.due-fortnight td {
+  border-color: #d2f0d4;
+}
+
+/* On small screens, allow horizontal scroll if columns are many */
+@media (max-width: 900px) {
+  #bills-table-wrap {
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  #bills-table {
+    min-width: 720px; /* prevent columns from squashing too hard */
+  }
+}
