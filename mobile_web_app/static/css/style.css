@@ -1,0 +1,522 @@
+/* Base styles for the mobile web version of the Budget Assistant
+ *
+ * This stylesheet defines a simple, clean look inspired by the original
+ * desktop application. Colours are chosen to mirror the soft teal theme
+ * used in the Windows version, while layouts are kept fluid so that
+ * screens scale gracefully from phone portrait to tablet landscape.
+ */
+
+/*
+ * Define CSS custom properties up front. These variables allow for easy
+ * theming and dark‑mode toggling. When the body has the `.dark-mode`
+ * class, many of these values are overridden further down. Keep all
+ * colour definitions here so switching modes only requires updating
+ * the variables.
+ */
+:root {
+  --bg-col: #f7f8fb;
+  --text-col: #1f2937;
+  --card-bg: #ffffff;
+  --nav-bg: #14a38b;
+  --primary-col: #14a38b;
+  --secondary-col: #6b7280;
+  --danger-col: #e11d48;
+  --table-header-bg: #eef2f7;
+  --table-border-col: #e5e7eb;
+  --progress-bg: #e5e7eb;
+  --tooltip-bg: rgba(0, 0, 0, 0.8);
+  --tooltip-text: #fff;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+  background-color: var(--bg-col);
+  color: var(--text-col);
+}
+
+/* Navigation bar across the top of the page */
+/* Navigation bar across the top of the page */
+.navbar {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  background-color: var(--nav-bg);
+  color: white;
+  padding: 12px;
+  flex-wrap: wrap;
+}
+
+.navbar button {
+  background: none;
+  border: none;
+  color: inherit;
+  font-size: 16px;
+  margin: 6px;
+  cursor: pointer;
+}
+
+.navbar button.active {
+  text-decoration: underline;
+}
+
+/* Additional container for icons (theme and help) at the end of the nav bar */
+.nav-icons {
+  margin-left: auto;
+  display: flex;
+  gap: 8px;
+}
+
+.nav-icons button {
+  margin: 0;
+}
+
+/* Main container for each page section */
+.container {
+  padding: 16px;
+}
+
+/* Each section is hidden by default and revealed when active */
+.section {
+  display: none;
+}
+
+.section.active {
+  display: block;
+}
+
+/* Card style used to separate logical groups of content */
+.card {
+  background-color: #ffffff;
+  padding: 16px;
+  margin-bottom: 20px;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  /* Ensure text inside cards uses the main text colour in both
+     light and dark themes. Without explicitly setting the colour
+     here, table contents can appear washed out in dark mode due
+     to inherited opacity. */
+  color: var(--text-col);
+}
+
+/* Form elements */
+label {
+  display: block;
+  margin-top: 8px;
+  font-weight: bold;
+}
+
+input[type="text"],
+input[type="number"],
+input[type="date"],
+input[type="range"],
+select {
+  width: 100%;
+  padding: 6px 8px;
+  margin-top: 4px;
+  margin-bottom: 10px;
+  border: 1px solid #e5e7eb;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+/* Buttons */
+.btn {
+  display: inline-block;
+  padding: 8px 12px;
+  margin: 4px 2px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+/* Buttons inherit colours from our variables */
+.btn-primary {
+  background-color: var(--primary-col);
+  color: white;
+}
+
+.btn-secondary {
+  background-color: var(--secondary-col);
+  color: white;
+}
+
+.btn-danger {
+  background-color: var(--danger-col);
+  color: white;
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Tables */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 12px;
+}
+
+th, td {
+  padding: 8px 6px;
+  text-align: left;
+  border-bottom: 1px solid var(--table-border-col);
+  /* Inherit text colour from card so that table rows remain legible
+     in dark mode. */
+  color: inherit;
+}
+
+th {
+  background-color: var(--table-header-bg);
+  font-weight: bold;
+  /* Inherit the main text colour so that header text remains
+     legible in both light and dark themes. */
+  color: var(--text-col);
+}
+
+/* Responsive design: stack nav buttons on small screens */
+@media (max-width: 600px) {
+  .navbar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .navbar button {
+    width: 100%;
+    text-align: left;
+    padding: 8px;
+  }
+}
+
+/* Layout for the budget planner on larger screens */
+.budget-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.budget-left,
+.budget-right {
+  width: 100%;
+}
+
+/* Organise into two columns when the screen is wide enough */
+@media (min-width: 768px) {
+  .budget-grid {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+  .budget-left,
+  .budget-right {
+    flex: 1;
+  }
+  .budget-right {
+    margin-left: 12px;
+  }
+}
+
+/* Styles for the bill filter area */
+.bill-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.bill-filter > div {
+  flex: 1 1 120px;
+}
+
+/* Ensure bill form fields stack neatly */
+.bill-form label {
+  margin-top: 6px;
+}
+
+/* Layout for the combined accounts page (debts & goals) */
+.accounts-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.accounts-left,
+.accounts-right {
+  width: 100%;
+}
+
+@media (min-width: 768px) {
+  .accounts-grid {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+  .accounts-left,
+  .accounts-right {
+    flex: 1;
+  }
+  .accounts-right {
+    margin-left: 12px;
+  }
+}
+
+/* Dashboard cards */
+.dashboard-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.dashboard-card {
+  flex: 1 1 160px;
+  background-color: var(--card-bg);
+  border-radius: 6px;
+  padding: 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: transform 0.1s ease;
+}
+
+.dashboard-card:hover {
+  transform: translateY(-2px);
+}
+
+.dashboard-card h3 {
+  margin: 0;
+  margin-bottom: 4px;
+  font-size: 16px;
+}
+
+.dashboard-card p {
+  margin: 4px 0;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.dashboard-card small {
+  color: var(--secondary-col);
+  font-size: 12px;
+}
+
+/* Bucket icons used in results table */
+.bucket-icon {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+  margin-right: 6px;
+}
+
+.bucket-splurge { background-color: #f87171; }
+.bucket-bills   { background-color: #fde047; }
+.bucket-fire    { background-color: #fb923c; }
+.bucket-smile   { background-color: #34d399; }
+.bucket-mojo    { background-color: #60a5fa; }
+
+/* Progress bars for debts and goals */
+.progress {
+  width: 100%;
+  background-color: var(--progress-bg);
+  border-radius: 4px;
+  height: 6px;
+  overflow: hidden;
+  margin-top: 4px;
+}
+
+.progress-bar {
+  height: 100%;
+  background-color: var(--primary-col);
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+/* Tooltip styling */
+.tooltip-icon {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background-color: var(--secondary-col);
+  color: white;
+  font-size: 11px;
+  margin-left: 4px;
+  cursor: help;
+  position: relative;
+}
+
+.tooltip-icon::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  top: 125%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: var(--tooltip-bg);
+  color: var(--tooltip-text);
+  padding: 6px 8px;
+  border-radius: 4px;
+  /* Allow long tooltip text to wrap and define a maximum width so
+     that descriptions remain readable without overflowing off
+     screen. */
+  white-space: normal;
+  max-width: 240px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+  z-index: 10;
+}
+
+.tooltip-icon:hover::after {
+  opacity: 1;
+}
+
+/* Ensure the results card remains fully opaque and legible in dark mode.
+   Without these overrides, some browsers apply reduced opacity to text
+   elements inside the results table, making them hard to read. */
+#budget-results,
+#budget-results p,
+#budget-results td {
+  color: var(--text-col);
+  opacity: 1;
+}
+/* Ensure the text in the results header also uses the correct colour */
+#budget-results th {
+  color: var(--text-col);
+}
+
+/* As a last resort, force all text within the budget results card
+   to use the primary text colour and full opacity. This overrides
+   any stray opacity rules that might originate from the browser or
+   other CSS, ensuring the figures remain clearly visible in dark
+   mode. */
+#budget-results * {
+  color: var(--text-col) !important;
+  opacity: 1 !important;
+}
+
+/* Force the entire results card to full opacity. In some browsers
+   inheriting opacity from parent elements can result in washed‑out
+   text. Setting the card itself to fully opaque ensures its
+   contents are clearly visible in dark mode. */
+#budget-results {
+  opacity: 1 !important;
+}
+
+/* Override colours for all elements inside the results table, including
+   headers and rows. This ensures the numbers in dark mode have the
+   same brightness as other text. */
+#budget-results table * {
+  color: var(--text-col) !important;
+  opacity: 1 !important;
+}
+
+/* Also force the summary text and heading within the results card to
+   use the main text colour. */
+#budget-results h3,
+#budget-results p {
+  color: var(--text-col) !important;
+}
+
+/* History page grid layout for snapshots and trend chart */
+.history-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+@media (min-width: 768px) {
+  .history-grid {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+  .history-grid > .card {
+    flex: 1;
+  }
+  .history-grid > .card + .card {
+    margin-left: 12px;
+  }
+}
+
+/* Dark mode overrides. Simply flipping the body into dark mode
+   automatically updates all variables defined above. */
+body.dark-mode {
+  --bg-col: #1f2937;
+  /* Use a brighter text colour in dark mode to ensure strong contrast.
+     A light grey close to white provides sufficient legibility without
+     appearing washed out. */
+  --text-col: #e5e7eb;
+  --card-bg: #374151;
+  --nav-bg: #0f766e;
+  --primary-col: #0d9488;
+  --secondary-col: #4b5563;
+  --danger-col: #be123c;
+  --table-header-bg: #4b5563;
+  --table-border-col: #475569;
+  --progress-bg: #475569;
+  --tooltip-bg: rgba(255, 255, 255, 0.9);
+  --tooltip-text: #1f2937;
+}
+
+/* In dark mode, ensure form controls (inputs, selects) adopt the
+   dark card background and light text. Without these overrides,
+   inputs remain white with pale text, which stands out harshly
+   against the dark backdrop. */
+body.dark-mode input[type="text"],
+body.dark-mode input[type="number"],
+body.dark-mode input[type="date"],
+body.dark-mode select {
+  background-color: var(--card-bg);
+  color: var(--text-col);
+  border: 1px solid var(--table-border-col);
+}
+}
+
+/*
+ * Help overlay styling
+ *
+ * The help overlay appears on top of all other content when the
+ * user clicks the help button or if the guide has not been seen
+ * before. It dims the background with a semi‑transparent backdrop
+ * and centres a card containing the help content. Colours are
+ * derived from the CSS variables so that the overlay integrates
+ * seamlessly with both light and dark themes. A high z‑index is
+ * used to ensure it sits above everything else.
+ */
+.help-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.help-content {
+  background-color: var(--card-bg);
+  color: var(--text-col);
+  padding: 24px;
+  border-radius: 8px;
+  max-width: 480px;
+  width: 90%;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.help-content h3 {
+  margin-top: 0;
+  margin-bottom: 12px;
+}
+
+.help-content ul {
+  padding-left: 20px;
+  margin-top: 8px;
+  margin-bottom: 12px;
+}
+
+.help-content li {
+  margin-bottom: 6px;
+}
