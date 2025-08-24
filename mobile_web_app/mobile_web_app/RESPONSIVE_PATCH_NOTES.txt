@@ -1,0 +1,4 @@
+Gobux responsive patch applied.
+- Added static/css/responsive.css and static/js/responsive.js
+- Injected viewport meta and linked the new assets in 2 HTML file(s).
+- Marked data tables as responsive (mobile-friendly card layout).
