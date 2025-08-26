@@ -702,7 +702,8 @@ async function addOrUpdateGoal() {
             name: name,
             target: target,
             saved: goals[idx].savedAmount,
-            priority: priority
+            priority: priority,
+            deadline: deadline
           });
         } catch (e) {
           console.error(e);
@@ -718,7 +719,8 @@ async function addOrUpdateGoal() {
           name: newGoal.name,
           target: newGoal.targetAmount,
           saved: newGoal.savedAmount,
-          priority: newGoal.priority
+          priority: newGoal.priority,
+          deadline: newGoal.deadline
         });
         if (remoteGoal && remoteGoal.id) {
           newGoal.id = String(remoteGoal.id);
