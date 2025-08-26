@@ -428,11 +428,14 @@ async function addOrUpdateBill() {
       newBill.customUnit = cUnit;
       newBill.customValue = cValue;
     }
-    // Attempt to persist to Supabase and adopt returned ID
+    let insertedViaCloud = false;
+    // Attempt to persist to Supabase and adopt returned ID. Only push to the local array
+    // when we are running offline or the cloud insertion is not available. This prevents
+    // duplicate entries from appearing when data is reloaded from Supabase.
     if (typeof window.insertBillCloud === 'function') {
       try {
         const remoteBill = await window.insertBillCloud(newBill);
-        // Always reload from cloud after attempting remote insert (whether it returned id or not)
+        insertedViaCloud = true;
         if (remoteBill && remoteBill.id) {
           newBill.id = String(remoteBill.id);
         }
@@ -443,20 +446,25 @@ async function addOrUpdateBill() {
           debts = window.debts;
           goals = window.goals;
           history = window.historyData;
-          // Re-render all tables now that mapping is applied
-          renderBillsTable();
-          renderDebtsTable();
-          renderGoalsTable();
-          renderHistoryTable();
         }
       } catch (e) {
         console.error(e);
+        insertedViaCloud = false;
       }
     }
-    bills.push(newBill);
+    // If the bill was not inserted via Supabase (either because the cloud functions
+    // are unavailable or the insert failed), append it locally. When insertedViaCloud
+    // is true, the data has already been reloaded from Supabase and pushing it again
+    // would result in a duplicate.
+    if (!insertedViaCloud) {
+      bills.push(newBill);
+    }
   }
   saveData();
   clearBillForm();
+  // Re-render the bills table using the current state. When a remote insert occurs
+  // and loadAllFromCloud was called, this will render the authoritative data from
+  // Supabase. When offline, it will show the locally added bill.
   renderBillsTable();
 }
 
