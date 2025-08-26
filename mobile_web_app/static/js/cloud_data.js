@@ -260,6 +260,17 @@
     try { window.renderHistoryTable && window.renderHistoryTable(); } catch(e){ console.warn(e); }
     try { window.renderDashboard && window.renderDashboard(); } catch(e){ console.warn(e); }
     try { window.renderHistoryChart && window.renderHistoryChart(); } catch(e){ console.warn(e); }
+
+    // Persist the freshly loaded cloud data into localStorage. This ensures
+    // that subsequent page loads (or logins) start from the most
+    // up‑to‑date remote state rather than stale localStorage entries.
+    try {
+      if (typeof window.saveData === 'function') {
+        window.saveData();
+      }
+    } catch(e) {
+      console.warn('Failed to save data after cloud sync:', e);
+    }
   }
 
   async function migrateLocalToCloud() {
