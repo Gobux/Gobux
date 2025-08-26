@@ -32,7 +32,7 @@ let history = window.historyData;
 let lastBudget = null;
 
 // Helper to load data from localStorage on page load
-async function loadData() {
+function loadData() {
   // Read persisted data from localStorage
   const billsData = JSON.parse(localStorage.getItem('bills') || '[]');
   const debtsData = JSON.parse(localStorage.getItem('debts') || '[]');
@@ -53,20 +53,6 @@ async function loadData() {
       d.initialAmount = d.amount;
     }
   });
-        // Refresh from cloud to avoid any local/remote divergence
-        if (typeof window.loadAllFromCloud === 'function') {
-          await window.loadAllFromCloud();
-          // After cloud reload, sync local refs to the authoritative window arrays
-          bills = window.bills;
-          debts = window.debts;
-          goals = window.goals;
-          history = window.historyData;
-          // Re-render all tables now that mapping is applied
-          renderBillsTable();
-          renderDebtsTable();
-          renderGoalsTable();
-          renderHistoryTable();
-        }
   // Reassign local references in case they pointed to stale arrays
   bills = window.bills;
   debts = window.debts;
@@ -379,14 +365,8 @@ async function addOrUpdateBill() {
   // Read custom period inputs
   const cUnit = document.getElementById('custom-unit')?.value;
   const cValue = document.getElementById('custom-value')?.value;
-  let start = document.getElementById('bill-start').value;
-  if (!start) {
-    // default to today so new bills aren't hidden by filters
-    start = new Date().toISOString().slice(0,10);
-    const startEl = document.getElementById('bill-start');
-    if (startEl) startEl.value = start;
-  }
-  if (!name || isNaN(amount) || amount <= 0) {
+  const start = document.getElementById('bill-start').value;
+  if (!name || !start || isNaN(amount) || amount <= 0) {
     alert('Please enter valid bill information.');
     return;
   }
@@ -432,22 +412,8 @@ async function addOrUpdateBill() {
     if (typeof window.insertBillCloud === 'function') {
       try {
         const remoteBill = await window.insertBillCloud(newBill);
-        // Always reload from cloud after attempting remote insert (whether it returned id or not)
         if (remoteBill && remoteBill.id) {
           newBill.id = String(remoteBill.id);
-        }
-        if (typeof window.loadAllFromCloud === 'function') {
-          await window.loadAllFromCloud();
-          // After cloud reload, sync local refs to the authoritative window arrays
-          bills = window.bills;
-          debts = window.debts;
-          goals = window.goals;
-          history = window.historyData;
-          // Re-render all tables now that mapping is applied
-          renderBillsTable();
-          renderDebtsTable();
-          renderGoalsTable();
-          renderHistoryTable();
         }
       } catch (e) {
         console.error(e);
@@ -606,7 +572,7 @@ async function deleteDebt(id) {
   renderDebtsTable();
 }
 
-async function showDebtDeposit(id) {
+function showDebtDeposit(id) {
   const d = debts.find(x => x.id === id);
   if (!d) return;
   // Build modal
@@ -702,8 +668,7 @@ async function addOrUpdateGoal() {
             name: name,
             target: target,
             saved: goals[idx].savedAmount,
-            priority: priority,
-            deadline: deadline
+            priority: priority
           });
         } catch (e) {
           console.error(e);
@@ -719,8 +684,7 @@ async function addOrUpdateGoal() {
           name: newGoal.name,
           target: newGoal.targetAmount,
           saved: newGoal.savedAmount,
-          priority: newGoal.priority,
-          deadline: newGoal.deadline
+          priority: newGoal.priority
         });
         if (remoteGoal && remoteGoal.id) {
           newGoal.id = String(remoteGoal.id);
@@ -767,7 +731,7 @@ async function deleteGoal(id) {
   renderGoalsTable();
 }
 
-async function showGoalDeposit(id) {
+function showGoalDeposit(id) {
   const g = goals.find(x => x.id === id);
   if (!g) return;
   const container = document.getElementById('modal-container');

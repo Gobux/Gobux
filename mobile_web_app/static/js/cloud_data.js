@@ -146,8 +146,7 @@
       name: goal.name,
       target: goal.target,
       saved: goal.saved || 0,
-      priority: goal.priority || 'Medium',
-      deadline: goal.deadline || null
+      priority: goal.priority || 'Medium'
     };
     const { data, error } = await supabase.from('goals').insert(payload).select().single();
     if (error) { console.error(error); alert("Failed to add goal"); return null; }
@@ -161,8 +160,7 @@
         name: patch.name,
         target: patch.target,
         saved: patch.saved,
-        priority: patch.priority,
-        deadline: patch.deadline || null
+        priority: patch.priority
       })
       .eq('id', id).eq('user_id', uid);
     if (error) { console.error(error); alert("Failed to update goal"); }
@@ -230,25 +228,8 @@
       };
     });
     window.bills.splice(0, window.bills.length, ...mappedBills);
-    const mappedDebts = (remoteDebts || []).map(d => ({
-      id: String(d.id),
-      name: d.name,
-      amount: d.amount,
-      minPayment: d.min_payment,
-      interest: d.interest,
-      priority: d.priority,
-      initialAmount: d.initial_amount
-    }));
-    window.debts.splice(0, window.debts.length, ...mappedDebts);
-    const mappedGoals = (remoteGoals || []).map(g => ({
-      id: String(g.id),
-      name: g.name,
-      targetAmount: g.target,
-      savedAmount: g.saved,
-      deadline: g.deadline || null,
-      priority: g.priority
-    }));
-    window.goals.splice(0, window.goals.length, ...mappedGoals);
+    window.debts.splice(0, window.debts.length, ...remoteDebts);
+    window.goals.splice(0, window.goals.length, ...remoteGoals);
     // Replace the contents of historyData rather than history
     window.historyData.splice(0, window.historyData.length, ...remoteHist);
     // Call your existing renderers, if they exist:
