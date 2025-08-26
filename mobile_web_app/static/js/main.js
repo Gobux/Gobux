@@ -56,9 +56,16 @@ async function loadData() {
         // Refresh from cloud to avoid any local/remote divergence
         if (typeof window.loadAllFromCloud === 'function') {
           await window.loadAllFromCloud();
+          // After cloud reload, sync local refs to the authoritative window arrays
           bills = window.bills;
+          debts = window.debts;
+          goals = window.goals;
+          history = window.historyData;
+          // Re-render all tables now that mapping is applied
           renderBillsTable();
-          return;
+          renderDebtsTable();
+          renderGoalsTable();
+          renderHistoryTable();
         }
   // Reassign local references in case they pointed to stale arrays
   bills = window.bills;
@@ -431,9 +438,16 @@ async function addOrUpdateBill() {
         }
         if (typeof window.loadAllFromCloud === 'function') {
           await window.loadAllFromCloud();
+          // After cloud reload, sync local refs to the authoritative window arrays
           bills = window.bills;
+          debts = window.debts;
+          goals = window.goals;
+          history = window.historyData;
+          // Re-render all tables now that mapping is applied
           renderBillsTable();
-          return;
+          renderDebtsTable();
+          renderGoalsTable();
+          renderHistoryTable();
         }
       } catch (e) {
         console.error(e);
