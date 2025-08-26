@@ -7,6 +7,10 @@
   <!-- Append a version query to bust caches when the stylesheet changes -->
   <!-- Append a version query to bust caches on CSS updates -->
   <link rel="stylesheet" href="static/css/style.css?v=3">
+  <!-- Load Google Fonts and Font Awesome for modern typography and icons -->
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-p1pEgCgx9RrnWdtdOMzDiH77EW36A1R+y+QsmIH0nS5mxV+09bpbRNar5s4QQIpyx3+rCb1Y9eczkoFk1o5vtg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
   <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <!-- Include local scripts with version query strings to force browsers to fetch the latest versions. -->
     <script defer src="static/js/config.js?v=3"></script>
@@ -129,6 +133,7 @@
       font-size: 0.85rem;
       color: var(--auth-text-secondary);
       user-select: none;
+      margin-left: 8px;
     }
     /* Actions row */
     #auth-panel .auth-actions {
@@ -203,12 +208,19 @@
   </style>
 </head>
 <body>
+  <!-- App Header with logo and tagline -->
+  <header class="app-header">
+    <div class="header-inner">
+      <h1 class="app-title">Budget Assistant</h1>
+      <p class="header-tagline">Plan. Save. Succeed.</p>
+    </div>
+  </header>
   <!-- Navigation bar -->
   <nav class="navbar">
-    <button id="nav-dashboard" class="active">Dashboard</button>
-    <button id="nav-budget">Budget</button>
-    <button id="nav-accounts">Accounts</button>
-    <button id="nav-history">History</button>
+    <button id="nav-dashboard" class="active"><i class="fa-solid fa-chart-line"></i><span>Dashboard</span></button>
+    <button id="nav-budget"><i class="fa-solid fa-clipboard-list"></i><span>Budget</span></button>
+    <button id="nav-accounts"><i class="fa-solid fa-wallet"></i><span>Accounts</span></button>
+    <button id="nav-history"><i class="fa-solid fa-clock-rotate-left"></i><span>History</span></button>
     <!-- Container for theme and help icons. By grouping them and pushing
          with margin-left:auto, both icons remain visible on the
          right side of the navigation bar. -->
@@ -245,6 +257,8 @@
           <label for="auth-pass">Password</label>
           <div class="auth-input">
             <input id="auth-pass" name="password" type="password" placeholder="••••••••" minlength="6" autocomplete="current-password" required>
+            <!-- Toggle to show or hide the password; script below binds its behaviour -->
+            <span class="auth-toggle-pass" id="toggle-pass">Show</span>
           </div>
         </div>
         <div class="auth-actions">
@@ -324,8 +338,8 @@
             <label for="smile-pct">Smile % <span class="tooltip-icon" data-tooltip="Money to put towards a saving goal.">i</span></label>
             <input type="number" id="smile-pct" min="0" max="100" step="0.1">
 
-            <button class="btn btn-primary" id="btn-calc">Calculate Budget</button>
-            <button class="btn btn-secondary" id="btn-save-snapshot" disabled>Save Snapshot</button>
+            <button class="btn btn-primary" id="btn-calc"><i class="fa-solid fa-calculator"></i><span>Calculate Budget</span></button>
+            <button class="btn btn-secondary" id="btn-save-snapshot" disabled><i class="fa-solid fa-save"></i><span>Save Snapshot</span></button>
           </div>
           <div class="card" id="budget-results" style="display:none;">
             <h3>Results</h3>
@@ -400,8 +414,8 @@
               </div>
               <label for="bill-start">Start Date</label>
               <input type="date" id="bill-start">
-              <button class="btn btn-primary" id="btn-add-bill">Add/Update Bill</button>
-              <button class="btn btn-secondary" id="btn-clear-bill">Clear</button>
+              <button class="btn btn-primary" id="btn-add-bill"><i class="fa-solid fa-plus-circle"></i><span>Add/Update Bill</span></button>
+              <button class="btn btn-secondary" id="btn-clear-bill"><i class="fa-solid fa-rotate-left"></i><span>Clear</span></button>
             </div>
             <!-- Bills table -->
             <table id="bills-table">
@@ -418,6 +432,12 @@
               <tbody>
               </tbody>
             </table>
+            <!-- Empty state for bills -->
+            <div id="bills-empty" class="empty-state" style="display:none;">
+              <img src="static/img/empty-bills.png" alt="No bills illustration">
+              <h4>No bills yet</h4>
+              <p>Add your first bill to start tracking.</p>
+            </div>
           </div>
         </div>
       </div>
@@ -444,8 +464,8 @@
               <option value="Medium">Medium</option>
               <option value="Low">Low</option>
             </select>
-            <button class="btn btn-primary" id="btn-add-goal">Add/Update Goal</button>
-            <button class="btn btn-secondary" id="btn-clear-goal">Clear</button>
+            <button class="btn btn-primary" id="btn-add-goal"><i class="fa-solid fa-bullseye"></i><span>Add/Update Goal</span></button>
+            <button class="btn btn-secondary" id="btn-clear-goal"><i class="fa-solid fa-rotate-left"></i><span>Clear</span></button>
           </div>
           <div class="card">
             <h3>Goals</h3>
@@ -455,6 +475,13 @@
               </thead>
               <tbody></tbody>
             </table>
+            <!-- Empty state for goals -->
+            <div id="goals-empty" class="empty-state" style="display:none;">
+              <img src="static/img/empty-goals.png" alt="No goals illustration">
+              <h4>No goals yet</h4>
+              <p>Set up a saving goal to track your progress.</p>
+            </div>
+            
           </div>
         </div>
         <!-- Right column for debts -->
@@ -484,8 +511,8 @@
               <option value="Medium">Medium</option>
               <option value="Low">Low</option>
             </select>
-            <button class="btn btn-primary" id="btn-add-debt">Add/Update Debt</button>
-            <button class="btn btn-secondary" id="btn-clear-debt">Clear</button>
+            <button class="btn btn-primary" id="btn-add-debt"><i class="fa-solid fa-coins"></i><span>Add/Update Debt</span></button>
+            <button class="btn btn-secondary" id="btn-clear-debt"><i class="fa-solid fa-rotate-left"></i><span>Clear</span></button>
           </div>
           <div class="card">
             <h3>Debts</h3>
@@ -495,6 +522,12 @@
               </thead>
               <tbody></tbody>
             </table>
+            <!-- Empty state for debts -->
+            <div id="debts-empty" class="empty-state" style="display:none;">
+              <img src="static/img/empty-debts.png" alt="No debts illustration">
+              <h4>No debts yet</h4>
+              <p>Add your debts to start tracking progress.</p>
+            </div>
           </div>
         </div>
       </div>
@@ -508,13 +541,19 @@
       <div class="history-grid">
         <div class="card">
           <h3>Budget Snapshots</h3>
-          <button class="btn btn-secondary" id="btn-export-history">Export CSV</button>
+          <button class="btn btn-secondary" id="btn-export-history"><i class="fa-solid fa-file-export"></i><span>Export CSV</span></button>
           <table id="history-table">
             <thead>
               <tr><th>Timestamp</th><th>Pay Cycle</th><th>Income1</th><th>Income2</th><th>Splurge</th><th>Bills</th><th>Fire%</th><th>Smile%</th><th>Fire$</th><th>Smile$</th><th>MOJO</th><th>Remaining</th><th>Total</th><th></th></tr>
             </thead>
-            <tbody></tbody>
-          </table>
+              <tbody></tbody>
+            </table>
+            <!-- Empty state for history/snapshots -->
+            <div id="history-empty" class="empty-state" style="display:none;">
+              <img src="static/img/empty-history.png" alt="No history illustration">
+              <h4>No snapshots yet</h4>
+              <p>Save a budget snapshot to view your history.</p>
+            </div>
         </div>
         <div class="card">
           <h3>Trends</h3>
@@ -525,9 +564,9 @@
       <div class="card">
         <h3>Backup &amp; Restore</h3>
         <p>You can export all of your data (bills, debts, goals and history) to a JSON file for safekeeping or move it to another device. You can also restore from a saved file.</p>
-        <button class="btn btn-primary" id="btn-export-data">Export Data</button>
+        <button class="btn btn-primary" id="btn-export-data"><i class="fa-solid fa-file-export"></i><span>Export Data</span></button>
         <input type="file" id="file-import-data" style="display:none" accept="application/json">
-        <button class="btn btn-secondary" id="btn-import-data">Import Data</button>
+        <button class="btn btn-secondary" id="btn-import-data"><i class="fa-solid fa-file-import"></i><span>Import Data</span></button>
       </div>
     </section>
   </div>
@@ -550,6 +589,31 @@
       <button class="btn btn-primary" id="help-close">Got it!</button>
     </div>
   </div>
+
+  <!-- App Footer -->
+  <footer class="app-footer">
+    © 2025 Budget Assistant
+  </footer>
+
+  <!-- Script to enable password show/hide toggle on the login form. We defer
+       binding until DOMContentLoaded to ensure the elements exist. -->
+  <script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const toggle = document.getElementById('toggle-pass');
+    const passInput = document.getElementById('auth-pass');
+    if (toggle && passInput) {
+      toggle.addEventListener('click', function() {
+        if (passInput.getAttribute('type') === 'password') {
+          passInput.setAttribute('type', 'text');
+          toggle.textContent = 'Hide';
+        } else {
+          passInput.setAttribute('type', 'password');
+          toggle.textContent = 'Show';
+        }
+      });
+    }
+  });
+  </script>
 
 
 </body>
