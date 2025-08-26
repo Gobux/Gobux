@@ -3,27 +3,26 @@
   const supabase = window.supabaseClient;
 
   async function requireAuth() {
+    // When called, check if a user is logged in. If not, redirect
     const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      // Navigate to the standalone authentication page rather than showing the inline panel
+      // Use a relative path so that index.html located in mobile_web_app redirects to auth.html in the same folder
+      window.location.href = 'auth.html';
+      return false;
+    }
+    // If a user is logged in, hide any inline auth panel and show the app UI
     const authPanel = document.getElementById('auth-panel');
     const navbar    = document.querySelector('.navbar');
     const sections  = Array.from(document.querySelectorAll('.section'));
     const navLogout = document.getElementById('nav-logout');
     const navUser   = document.getElementById('nav-user');
-
-    if (user) {
-      if (authPanel) authPanel.style.display = 'none';
-      if (navbar)    navbar.style.display    = 'flex';
-      sections.forEach(sec => sec.style.display = '');
-      if (navLogout) navLogout.style.display = 'inline-flex';
-      if (navUser)   navUser.textContent     = user.email || '';
-    } else {
-      if (authPanel) authPanel.style.display = 'block';
-      if (navbar)    navbar.style.display    = 'none';
-      sections.forEach(sec => sec.style.display = 'none');
-      if (navLogout) navLogout.style.display = 'none';
-      if (navUser)   navUser.textContent     = '';
-    }
-    return !!user;
+    if (authPanel) authPanel.style.display = 'none';
+    if (navbar)    navbar.style.display    = 'flex';
+    sections.forEach(sec => sec.style.display = '');
+    if (navLogout) navLogout.style.display = 'inline-flex';
+    if (navUser)   navUser.textContent     = user.email || '';
+    return true;
   }
 
   async function login() {
