@@ -141,12 +141,14 @@
 
   async function insertGoalCloud(goal) {
     const uid = await getUserId();
+    // Persist goal deadline to the database if provided; default to null when missing.
     const payload = {
       user_id: uid,
       name: goal.name,
       target: goal.target,
       saved: goal.saved || 0,
-      priority: goal.priority || 'Medium'
+      priority: goal.priority || 'Medium',
+      deadline: goal.deadline || null
     };
     const { data, error } = await supabase.from('goals').insert(payload).select().single();
     if (error) { console.error(error); alert("Failed to add goal"); return null; }
@@ -160,7 +162,8 @@
         name: patch.name,
         target: patch.target,
         saved: patch.saved,
-        priority: patch.priority
+        priority: patch.priority,
+        deadline: patch.deadline || null
       })
       .eq('id', id).eq('user_id', uid);
     if (error) { console.error(error); alert("Failed to update goal"); }
@@ -311,8 +314,13 @@
     }
     if (localGoals.length) {
       const goalsPayload = localGoals.map(g => ({
-        user_id: uid, name: g.name, target: g.target,
-        saved: g.saved || 0, priority: g.priority || 'Medium'
+        user_id: uid,
+        name: g.name,
+        target: g.target,
+        saved: g.saved || 0,
+        priority: g.priority || 'Medium',
+        // Include the deadline when migrating local goals. Use null when missing.
+        deadline: g.deadline || null
       }));
       await supabase.from('goals').insert(goalsPayload);
     }

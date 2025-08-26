@@ -323,9 +323,11 @@ function renderGoalsTable() {
     }
     const progressBar = `<div class="progress"><div class="progress-bar" style="width:${pct}%;background-color:${gBarCol};"></div></div>`;
     const tr = document.createElement('tr');
+    // When deadline is null or undefined, display an empty string instead of "null" to avoid showing literal null in the UI.
+    const formattedDeadline = goal.deadline ? goal.deadline : '';
     tr.innerHTML = `<td>${goal.name}</td>
                     <td>${fmtMoney(goal.targetAmount)}</td>
-                    <td>${goal.deadline}</td>
+                    <td>${formattedDeadline}</td>
                     <td>${goal.priority}<br>${progressBar}</td>
                     <td>${fmtMoney(goal.savedAmount)}</td>
                     <td>${pct}%</td>
@@ -699,14 +701,15 @@ async function addOrUpdateGoal() {
       goals[idx].targetAmount = target;
       goals[idx].deadline = deadline;
       goals[idx].priority = priority;
-      // Persist update to Supabase
+      // Persist update to Supabase. Include the deadline so it is stored remotely.
       if (typeof window.updateGoalCloud === 'function') {
         try {
           await window.updateGoalCloud(id, {
             name: name,
             target: target,
             saved: goals[idx].savedAmount,
-            priority: priority
+            priority: priority,
+            deadline: deadline
           });
         } catch (e) {
           console.error(e);
@@ -715,14 +718,15 @@ async function addOrUpdateGoal() {
     }
   } else {
     const newGoal = { id: String(Date.now()), name: name, targetAmount: target, savedAmount: 0, deadline: deadline, priority: priority };
-    // Persist to Supabase and adopt remote id
+    // Persist to Supabase and adopt remote id. Include the deadline so it is stored remotely.
     if (typeof window.insertGoalCloud === 'function') {
       try {
         const remoteGoal = await window.insertGoalCloud({
           name: newGoal.name,
           target: newGoal.targetAmount,
           saved: newGoal.savedAmount,
-          priority: newGoal.priority
+          priority: newGoal.priority,
+          deadline: newGoal.deadline
         });
         if (remoteGoal && remoteGoal.id) {
           newGoal.id = String(remoteGoal.id);
