@@ -31,8 +31,11 @@ let history = window.historyData;
 // snapshot after calculation.
 let lastBudget = null;
 
-// Helper to load data from localStorage on page load
-function loadData() {
+// Helper to load data from localStorage on page load. Also fetches
+// remote data from Supabase if available to ensure up‑to‑date
+// information and correct field mappings. Marked async to allow
+// awaiting the cloud reload.
+async function loadData() {
   // Read persisted data from localStorage
   const billsData = JSON.parse(localStorage.getItem('bills') || '[]');
   const debtsData = JSON.parse(localStorage.getItem('debts') || '[]');
@@ -53,6 +56,24 @@ function loadData() {
       d.initialAmount = d.amount;
     }
   });
+  // If cloud sync helpers exist, pull down the latest data. This
+  // refreshes the window.bills/debts/goals/historyData arrays and
+  // applies the correct field mapping for remote rows. We await
+  // the promise to ensure subsequent code sees the up‑to‑date
+  // values.
+  if (typeof window.loadAllFromCloud === 'function') {
+    try {
+      await window.loadAllFromCloud();
+      // After cloud reload, update local references to point at
+      // the authoritative arrays on window.
+      bills = window.bills;
+      debts = window.debts;
+      goals = window.goals;
+      history = window.historyData;
+    } catch (e) {
+      console.error('Cloud sync failed:', e);
+    }
+  }
   // Reassign local references in case they pointed to stale arrays
   bills = window.bills;
   debts = window.debts;
@@ -388,7 +409,7 @@ async function addOrUpdateBill() {
       // Persist update to Supabase if available
       if (typeof window.updateBillCloud === 'function') {
         try {
-        await window.updateBillCloud(id, {
+          await window.updateBillCloud(id, {
             name: name,
             amount: amount,
             frequency: freq,
@@ -396,6 +417,23 @@ async function addOrUpdateBill() {
             customUnit: (freq === 'Custom' ? cUnit : null),
             customValue: (freq === 'Custom' ? cValue : null)
           });
+          // After updating the bill on Supabase, reload all
+          // collections from the cloud to ensure the UI reflects
+          // the latest data. This avoids requiring the user to
+          // toggle filters to see changes.
+          if (typeof window.loadAllFromCloud === 'function') {
+            await window.loadAllFromCloud();
+            // Sync local references after cloud reload
+            bills = window.bills;
+            debts = window.debts;
+            goals = window.goals;
+            history = window.historyData;
+            // Re-render all tables to reflect any changes
+            renderBillsTable();
+            renderDebtsTable();
+            renderGoalsTable();
+            renderHistoryTable();
+          }
         } catch (e) {
           console.error(e);
         }
@@ -1231,9 +1269,11 @@ function showSection(sectionId) {
 }
 
 // Initialisation function executed once the DOM is ready
-document.addEventListener('DOMContentLoaded', function() {
-  // Load persisted data
-  loadData();
+document.addEventListener('DOMContentLoaded', async function() {
+  // Load persisted data and refresh from cloud. Wait for
+  // loadData to complete so that remote data is available before
+  // rendering tables.
+  await loadData();
   // Render tables
   renderBillsTable();
   renderDebtsTable();

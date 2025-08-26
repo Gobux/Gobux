@@ -228,8 +228,29 @@
       };
     });
     window.bills.splice(0, window.bills.length, ...mappedBills);
-    window.debts.splice(0, window.debts.length, ...remoteDebts);
-    window.goals.splice(0, window.goals.length, ...remoteGoals);
+    // Map remote field names to local field names for debts and goals
+    // Debts: convert snake_case fields (min_payment, initial_amount) to camelCase
+    const mappedDebts = (remoteDebts || []).map(d => ({
+      id: String(d.id),
+      name: d.name,
+      amount: d.amount,
+      minPayment: d.min_payment,
+      interest: d.interest,
+      priority: d.priority,
+      initialAmount: d.initial_amount
+    }));
+    window.debts.splice(0, window.debts.length, ...mappedDebts);
+
+    // Goals: convert snake_case fields (target, saved) to camelCase and ensure deadline is null when missing
+    const mappedGoals = (remoteGoals || []).map(g => ({
+      id: String(g.id),
+      name: g.name,
+      targetAmount: g.target,
+      savedAmount: g.saved,
+      deadline: g.deadline || null,
+      priority: g.priority
+    }));
+    window.goals.splice(0, window.goals.length, ...mappedGoals);
     // Replace the contents of historyData rather than history
     window.historyData.splice(0, window.historyData.length, ...remoteHist);
     // Call your existing renderers, if they exist:

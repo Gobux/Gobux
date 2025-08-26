@@ -11,7 +11,19 @@
       window.location.href = 'auth.html';
       return false;
     }
-    // If a user is logged in, hide any inline auth panel and show the app UI
+    // If a user is logged in, ensure we have the latest data from
+    // Supabase before showing the UI. Use a try/catch so that
+    // errors do not block rendering. Because requireAuth may be
+    // called very early (before main.js has bound its helpers), we
+    // defer to loadAllFromCloud if it exists on the window.
+    if (typeof window.loadAllFromCloud === 'function') {
+      try {
+        await window.loadAllFromCloud();
+      } catch (e) {
+        console.warn('Cloud refresh in auth requireAuth failed:', e);
+      }
+    }
+    // Hide any inline auth panel and show the main app UI
     const authPanel = document.getElementById('auth-panel');
     const navbar    = document.querySelector('.navbar');
     const sections  = Array.from(document.querySelectorAll('.section'));
