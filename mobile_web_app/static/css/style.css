@@ -31,8 +31,7 @@
 body {
   margin: 0;
   padding: 0;
-  /* Adopt the Inter typeface loaded from Google Fonts for a modern look */
-  font-family: 'Inter', sans-serif;
+  font-family: Arial, sans-serif;
   background-color: var(--bg-col);
   color: var(--text-col);
 }
@@ -49,7 +48,6 @@ body {
   flex-wrap: wrap;
 }
 
-/* Style nav buttons with icons. Display them as flex rows with a small gap between the icon and label. */
 .navbar button {
   background: none;
   border: none;
@@ -57,17 +55,6 @@ body {
   font-size: 16px;
   margin: 6px;
   cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 4px 6px;
-  transition: opacity 0.2s ease;
-}
-.navbar button i {
-  font-size: 16px;
-}
-.navbar button:hover {
-  opacity: 0.85;
 }
 
 .navbar button.active {
@@ -101,11 +88,11 @@ body {
 
 /* Card style used to separate logical groups of content */
 .card {
-  background-color: var(--card-bg);
-  padding: 20px;
-  margin-bottom: 24px;
-  border-radius: 10px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  background-color: #ffffff;
+  padding: 16px;
+  margin-bottom: 20px;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   /* Ensure text inside cards uses the main text colour in both
      light and dark themes. Without explicitly setting the colour
      here, table contents can appear washed out in dark mode due
@@ -136,27 +123,13 @@ select {
 
 /* Buttons */
 .btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 10px 16px;
+  display: inline-block;
+  padding: 8px 12px;
   margin: 4px 2px;
   border: none;
-  border-radius: 6px;
+  border-radius: 4px;
   cursor: pointer;
   font-size: 14px;
-  font-weight: 500;
-  transition: background-color 0.2s ease, transform 0.1s ease;
-}
-
-/* Provide subtle hover and active feedback on buttons */
-.btn:hover {
-  transform: translateY(-1px);
-  filter: brightness(1.05);
-}
-.btn:active {
-  transform: translateY(0);
-  filter: brightness(0.95);
 }
 
 /* Buttons inherit colours from our variables */
@@ -185,14 +158,6 @@ table {
   width: 100%;
   border-collapse: collapse;
   margin-top: 12px;
-}
-
-/* Zebra striping for table rows to enhance readability */
-tbody tr:nth-child(odd) {
-  background-color: var(--card-bg);
-}
-tbody tr:nth-child(even) {
-  background-color: var(--bg-col);
 }
 
 th, td {
@@ -305,16 +270,15 @@ th {
 .dashboard-card {
   flex: 1 1 160px;
   background-color: var(--card-bg);
-  border-radius: 10px;
-  padding: 20px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  border-radius: 6px;
+  padding: 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   cursor: pointer;
-  transition: transform 0.1s ease, box-shadow 0.2s ease;
+  transition: transform 0.1s ease;
 }
 
 .dashboard-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  transform: translateY(-2px);
 }
 
 .dashboard-card h3 {
@@ -332,36 +296,6 @@ th {
 .dashboard-card small {
   color: var(--secondary-col);
   font-size: 12px;
-}
-
-/* Generic empty state styling used in bills, goals, debts and history tables.
-   When a table has no rows, these placeholders provide a friendly
-   illustration and message. The elements are centred and use our
-   neutral colours to avoid distracting from the main content. */
-.empty-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 24px 12px;
-  text-align: center;
-  color: var(--secondary-col);
-}
-.empty-state img {
-  width: 140px;
-  max-width: 60%;
-  margin-bottom: 16px;
-  opacity: 0.9;
-}
-.empty-state h4 {
-  margin: 0;
-  font-size: 1.1rem;
-  color: var(--text-col);
-  font-weight: 600;
-}
-.empty-state p {
-  margin: 6px 0 0;
-  font-size: 0.9rem;
 }
 
 /* Bucket icons used in results table */
@@ -536,7 +470,7 @@ body.dark-mode select {
   color: var(--text-col);
   border: 1px solid var(--table-border-col);
 }
-
+}
 
 /*
  * Help overlay styling
@@ -585,35 +519,4 @@ body.dark-mode select {
 
 .help-content li {
   margin-bottom: 6px;
-}
-
-/* Header and footer styling */
-.app-header {
-  background-color: var(--card-bg);
-  border-bottom: 1px solid var(--table-border-col);
-  padding: 16px;
-  text-align: center;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
-}
-.app-header .app-title {
-  margin: 0;
-  font-size: 1.8rem;
-  font-weight: 600;
-  color: var(--primary-col);
-}
-.app-header .header-tagline {
-  margin: 4px 0 0;
-  font-size: 1rem;
-  color: var(--secondary-col);
-  font-weight: 400;
-}
-
-.app-footer {
-  margin-top: 40px;
-  padding: 16px;
-  text-align: center;
-  font-size: 0.85rem;
-  color: var(--secondary-col);
-  border-top: 1px solid var(--table-border-col);
-  background-color: var(--card-bg);
 }

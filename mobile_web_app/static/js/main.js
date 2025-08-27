@@ -239,7 +239,6 @@ function renderBillsTable() {
   if (payStart) {
     fStart = new Date(payStart);
   }
-  let rowCount = 0;
   bills.forEach(bill => {
     // search filter
     if (searchQ && !bill.name.toLowerCase().includes(searchQ)) {
@@ -247,7 +246,7 @@ function renderBillsTable() {
     }
     // show filter
     let include = true;
-    const nextDue = computeNextDueBill(bill);
+    let nextDue = computeNextDueBill(bill);
     if (showFilter === 'due' && payStart) {
       include = isDueThisFortnightCustom(bill, payStart);
     }
@@ -260,30 +259,16 @@ function renderBillsTable() {
                     <td>${bill.startDate}</td>
                     <td>${nextDueStr}</td>
                     <td>
-                      <button class="btn btn-secondary" title="Edit" onclick="editBill('${bill.id}')"><i class="fa-solid fa-pen"></i></button>
-                      <button class="btn btn-danger" title="Delete" onclick="deleteBill('${bill.id}')"><i class="fa-solid fa-trash"></i></button>
+                      <button class="btn btn-secondary" onclick="editBill('${bill.id}')">Edit</button>
+                      <button class="btn btn-danger" onclick="deleteBill('${bill.id}')">Delete</button>
                     </td>`;
     tbody.appendChild(tr);
-    rowCount++;
   });
-  // Toggle empty state when no rows match filters
-  const emptyDiv = document.getElementById('bills-empty');
-  const tableEl  = document.getElementById('bills-table');
-  if (emptyDiv && tableEl) {
-    if (rowCount === 0) {
-      tableEl.style.display = 'none';
-      emptyDiv.style.display = 'flex';
-    } else {
-      tableEl.style.display = '';
-      emptyDiv.style.display = 'none';
-    }
-  }
 }
 
 function renderDebtsTable() {
   const tbody = document.querySelector('#debts-table tbody');
   tbody.innerHTML = '';
-  let rowCount = 0;
   debts.forEach(debt => {
     const tr = document.createElement('tr');
     // Compute progress (how much has been paid off)
@@ -308,31 +293,17 @@ function renderDebtsTable() {
                     <td>${Number(debt.interest).toFixed(2)}%</td>
                     <td>${debt.priority}<br>${progressBar}</td>
                     <td>
-                      <button class="btn btn-secondary" title="Edit" onclick="editDebt('${debt.id}')"><i class="fa-solid fa-pen"></i></button>
-                      <button class="btn btn-danger" title="Delete" onclick="deleteDebt('${debt.id}')"><i class="fa-solid fa-trash"></i></button>
-                      <button class="btn btn-primary" title="Deposit" onclick="showDebtDeposit('${debt.id}')"><i class="fa-solid fa-piggy-bank"></i></button>
+                      <button class="btn btn-secondary" onclick="editDebt('${debt.id}')">Edit</button>
+                      <button class="btn btn-danger" onclick="deleteDebt('${debt.id}')">Delete</button>
+                      <button class="btn btn-primary" onclick="showDebtDeposit('${debt.id}')">Deposit</button>
                     </td>`;
     tbody.appendChild(tr);
-    rowCount++;
   });
-  // Toggle empty state when there are no debts
-  const emptyDiv = document.getElementById('debts-empty');
-  const tableEl  = document.getElementById('debts-table');
-  if (emptyDiv && tableEl) {
-    if (rowCount === 0) {
-      tableEl.style.display = 'none';
-      emptyDiv.style.display = 'flex';
-    } else {
-      tableEl.style.display = '';
-      emptyDiv.style.display = 'none';
-    }
-  }
 }
 
 function renderGoalsTable() {
   const tbody = document.querySelector('#goals-table tbody');
   tbody.innerHTML = '';
-  let rowCount = 0;
   goals.forEach(goal => {
     const pct = goal.targetAmount ? Math.round((goal.savedAmount / goal.targetAmount) * 100) : 0;
     // Colour progress bar by priority (high/medium/low)
@@ -352,32 +323,18 @@ function renderGoalsTable() {
                     <td>${fmtMoney(goal.savedAmount)}</td>
                     <td>${pct}%</td>
                     <td>
-                      <button class="btn btn-secondary" title="Edit" onclick="editGoal('${goal.id}')"><i class="fa-solid fa-pen"></i></button>
-                      <button class="btn btn-danger" title="Delete" onclick="deleteGoal('${goal.id}')"><i class="fa-solid fa-trash"></i></button>
-                      <button class="btn btn-primary" title="Deposit" onclick="showGoalDeposit('${goal.id}')"><i class="fa-solid fa-piggy-bank"></i></button>
+                      <button class="btn btn-secondary" onclick="editGoal('${goal.id}')">Edit</button>
+                      <button class="btn btn-danger" onclick="deleteGoal('${goal.id}')">Delete</button>
+                      <button class="btn btn-primary" onclick="showGoalDeposit('${goal.id}')">Deposit</button>
                     </td>`;
     tbody.appendChild(tr);
-    rowCount++;
   });
-  // Toggle empty state for goals
-  const emptyDiv = document.getElementById('goals-empty');
-  const tableEl  = document.getElementById('goals-table');
-  if (emptyDiv && tableEl) {
-    if (rowCount === 0) {
-      tableEl.style.display = 'none';
-      emptyDiv.style.display = 'flex';
-    } else {
-      tableEl.style.display = '';
-      emptyDiv.style.display = 'none';
-    }
-  }
 }
 
 function renderHistoryTable() {
   const tbody = document.querySelector('#history-table tbody');
   tbody.innerHTML = '';
   history.sort((a,b) => new Date(b.ts) - new Date(a.ts));
-  let rowCount = 0;
   history.forEach((snap, idx) => {
     const tr = document.createElement('tr');
     tr.innerHTML = `<td>${snap.ts}</td>
@@ -393,22 +350,9 @@ function renderHistoryTable() {
                     <td>${fmtMoney(snap.mojo_amt)}</td>
                     <td>${fmtMoney(snap.remaining)}</td>
                     <td>${fmtMoney(snap.total_income)}</td>
-                    <td><button class="btn btn-danger" title="Delete" onclick="deleteSnapshot(${idx})"><i class="fa-solid fa-trash"></i></button></td>`;
+                    <td><button class="btn btn-danger" onclick="deleteSnapshot(${idx})">Delete</button></td>`;
     tbody.appendChild(tr);
-    rowCount++;
   });
-  // Toggle empty state for history
-  const emptyDiv = document.getElementById('history-empty');
-  const tableEl  = document.getElementById('history-table');
-  if (emptyDiv && tableEl) {
-    if (rowCount === 0) {
-      tableEl.style.display = 'none';
-      emptyDiv.style.display = 'flex';
-    } else {
-      tableEl.style.display = '';
-      emptyDiv.style.display = 'none';
-    }
-  }
 }
 
 // Bill CRUD

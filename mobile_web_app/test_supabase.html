@@ -15,8 +15,10 @@
     .bad { color: #b00020; font-weight: 600; }
   </style>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<link rel="stylesheet" href="../assets/theme.css">
 </head>
-<body>
+<body class="app">
   <h1>Supabase Connectivity Test</h1>
   <p>Paste your <strong>SUPABASE_URL</strong> and <strong>anon key</strong> from <code>config.js</code> below.</p>
 
@@ -115,5 +117,7 @@ document.getElementById('btn-logout').onclick = async () => {
   } catch (e) { log('LOGOUT exception:', e.toString()); }
 };
 </script>
+
+<script defer src="../assets/ui-polish.js"></script>
 </body>
 </html>
