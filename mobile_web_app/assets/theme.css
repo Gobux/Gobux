@@ -1,1 +1,122 @@
-:root{--brand:#6b46ff} /* placeholder; your existing theme file remains if present */
+/* Gobux Polish Theme
+   This stylesheet defines a cohesive colour palette, typography and layout primitives for the Gobux web app.
+   It introduces soft backgrounds, elevated cards, responsive grids, buttons, tables, badges and focus rings.
+   The dark mode values automatically apply when the user's OS prefers a dark theme. */
+:root{
+  /* Colour palette */
+  --bg: hsl(220 20% 97%);
+  --panel: hsl(0 0% 100%);
+  --ink: hsl(222 35% 15%);
+  --muted: hsl(222 12% 45%);
+  --brand: hsl(261 75% 55%);
+  --brand-ink: #fff;
+  --ok: hsl(158 60% 40%);
+  --warn: hsl(40 95% 45%);
+  --err: hsl(0 75% 55%);
+  --ring: hsla(261, 75%, 55%, .35);
+
+  /* Radii, shadows and sizing scales */
+  --r: 16px;
+  --shadow: 0 10px 30px rgba(2,10,34,.08);
+  --maxw: 1120px;
+
+  /* Spacing scale */
+  --s1: 6px; --s2: 10px; --s3: 14px; --s4: 18px; --s5: 24px; --s6: 32px; --s7: 48px;
+}
+
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg: hsl(230 21% 10%);
+    --panel: hsl(230 18% 14%);
+    --ink: hsl(0 0% 100%);
+    --muted: hsl(230 8% 68%);
+    --shadow: 0 10px 30px rgba(0,0,0,.35);
+  }
+}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  font: 15px/1.55 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Inter, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+  color:var(--ink);
+  background:
+    radial-gradient(1200px 600px at 80% -10%, hsla(261,85%,60%,.10), transparent 60%),
+    radial-gradient(900px 500px at -10% 0%, hsla(200,85%,60%,.10), transparent 60%),
+    var(--bg);
+}
+
+/* Layout helpers */
+.app{
+  min-height:100%;
+  display:grid;
+  grid-template-rows: auto 1fr auto;
+}
+.topbar{
+  position:sticky; top:0; z-index:10;
+  backdrop-filter:saturate(120%) blur(8px);
+  background: color-mix(in oklab, var(--panel) 70%, transparent);
+  border-bottom: 1px solid color-mix(in oklab, var(--ink) 12%, transparent);
+}
+.topbar-inner{max-width:var(--maxw); margin:0 auto; padding: var(--s4) var(--s5); display:flex; gap: var(--s5); align-items:center; justify-content:space-between;}
+.brand{display:flex; gap:var(--s3); align-items:center; font-weight:700}
+.brand .dot{width:10px; height:10px; border-radius:999px; background:var(--brand); box-shadow:0 0 0 6px var(--ring)}
+.user{display:flex; gap: var(--s3); align-items:center; color:var(--muted);}
+
+.container{max-width:var(--maxw); margin:0 auto; padding: var(--s6) var(--s5);}
+.grid{
+  display:grid; gap: var(--s5);
+  grid-template-columns: repeat(12, 1fr);
+}
+.card{
+  background:var(--panel);
+  box-shadow:var(--shadow);
+  border-radius:var(--r);
+  padding: var(--s5);
+  border: 1px solid color-mix(in oklab, var(--ink) 10%, transparent);
+  transition: transform .12s ease, box-shadow .12s ease, border-color .12s ease;
+}
+.card:hover{ transform: translateY(-2px); box-shadow: 0 16px 40px rgba(2,10,34,.12); }
+.card h3{margin:0 0 var(--s3); font-size:1.05rem}
+
+/* Column utilities */
+.col-4{grid-column: span 4}
+.col-5{grid-column: span 5}
+.col-6{grid-column: span 6}
+.col-7{grid-column: span 7}
+.col-8{grid-column: span 8}
+.col-12{grid-column: span 12}
+@media (max-width: 900px){
+  .col-4,.col-5,.col-6,.col-7,.col-8{grid-column: span 12}
+}
+
+/* Buttons */
+.btn{
+  appearance:none; border:0; border-radius:12px; padding:10px 14px; font-weight:600;
+  background:var(--brand); color:var(--brand-ink); cursor:pointer;
+  box-shadow: 0 6px 18px hsla(261,75%,55%,.25);
+  transition: transform .08s ease, box-shadow .12s ease, filter .08s;
+}
+.btn:hover{ filter: brightness(1.05) }
+.btn:active{ transform: translateY(1px) }
+
+/* Table */
+.table{ width:100%; border-collapse:separate; border-spacing:0 8px; font-size:.9rem; }
+.table thead th{ text-align:left; font-size:.82rem; letter-spacing:.02em; color:var(--muted); position:sticky; top:0; background:transparent; padding:0 16px 4px; }
+.table tbody tr{ background:var(--panel); box-shadow: var(--shadow); }
+.table tbody td{ padding:14px 16px; border-top:1px solid color-mix(in oklab, var(--ink) 10%, transparent); border-bottom:1px solid color-mix(in oklab, var(--ink) 10%, transparent); }
+.table tbody tr:hover{ outline: 2px solid var(--ring); }
+.table td.num{text-align:right;}
+
+/* Badges */
+.badge{ display:inline-flex; align-items:center; gap:8px; padding:6px 10px; border-radius:999px; font-weight:600; font-size:.78rem; }
+.badge.ok{ background: color-mix(in oklab, var(--ok) 18%, transparent); color: color-mix(in oklab, var(--ok) 90%, white); }
+.badge.warn{ background: color-mix(in oklab, var(--warn) 20%, transparent); color: color-mix(in oklab, var(--warn) 85%, white); }
+.badge.err{ background: color-mix(in oklab, var(--err) 20%, transparent); color: color-mix(in oklab, var(--err) 90%, white); }
+
+/* Focus styles */
+:where(button, a, input, select, textarea):focus-visible{
+  outline: 3px solid var(--ring);
+  outline-offset: 2px;
+  border-radius: 10px;
+}

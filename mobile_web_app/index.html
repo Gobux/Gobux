@@ -6,7 +6,9 @@
   <title>Budget Assistant — Mobile</title>
   <!-- Append a version query to bust caches when the stylesheet changes -->
   <!-- Append a version query to bust caches on CSS updates -->
-  <link rel="stylesheet" href="static/css/style.css?v=3">
+    <link rel="stylesheet" href="static/css/style.css?v=3">
+    <!-- Load Gobux polish theme -->
+    <link rel="stylesheet" href="assets/theme.css?v=1">
   <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <!-- Include local scripts with version query strings to force browsers to fetch the latest versions. -->
     <script defer src="static/js/config.js?v=3"></script>
@@ -555,6 +557,8 @@
 
 
 
+    <!-- Apply Gobux UI polish -->
+    <script defer src="assets/ui-polish.js"></script>
 <script defer src="assets/dashboard_enhancer_realdata_plus.js"></script>
 </body>
 </html>
