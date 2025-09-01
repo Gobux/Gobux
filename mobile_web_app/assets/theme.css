@@ -120,3 +120,29 @@ body{
   outline-offset: 2px;
   border-radius: 10px;
 }
+
+/*
+ * Mobile adjustments: reduce horizontal scrolling and improve layout on small screens.
+ * When the viewport width is under 700px, stack grid columns into a single column,
+ * reduce card padding, hide decorative sparklines and allow tables to scroll
+ * horizontally within their containers. Additionally, prevent the overall page
+ * from scrolling horizontally by hiding overflow on the body. These rules only
+ * take effect on narrow screens so the desktop experience remains unaffected.
+ */
+@media (max-width: 700px){
+  /* Prevent the entire page from scrolling sideways */
+  body{ overflow-x:hidden; }
+  /* Reduce container padding on small screens */
+  .container{ padding: var(--s5) var(--s3); }
+  /* Stack all grid columns into a single column */
+  .grid{ grid-template-columns: 1fr; }
+  /* Allow items in the top bar to wrap onto new lines */
+  .topbar-inner{ flex-wrap: wrap; }
+  /* Reduce card padding for a more compact layout */
+  .card{ padding: var(--s4); }
+  /* Hide the sparkline in the hero card to avoid overflow */
+  .sparkline{ display:none; }
+  /* Allow tables to scroll horizontally within their container so they do not force
+     the entire page to scroll. On desktop screens, tables remain full width. */
+  .table{ display:block; overflow-x:auto; width:100%; }
+}

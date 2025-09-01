@@ -87,15 +87,15 @@
         <aside class="card col-5">
           <h3>Buckets</h3>
           <p class="muted">Distribution</p>
-          <div style="display:flex; gap:12px; align-items:center">
-            <div style="width:120px; aspect-ratio:1/1; border-radius:999px; background:
-              conic-gradient(hsl(261,75%,55%) 0 33%, hsl(158,60%,40%) 33% 66%, hsl(40,95%,45%) 66% 100%);"></div>
-            <ul style="margin:0; padding-left:16px">
-              <li>Bucket 1</li>
-              <li>Bucket 2</li>
-              <li>Bucket 3</li>
-            </ul>
-          </div>
+          <!-- Canvas for dynamic donut chart -->
+          <canvas id="gobux-donut" width="160" height="160" style="display:block; margin:0 auto;"></canvas>
+          <ul style="margin-top:var(--s3); list-style:none; padding:0; font-size:.85rem;">
+            <li style="color:#f87171;">Splurge</li>
+            <li style="color:#fde047;">Bills</li>
+            <li style="color:#fb923c;">Fire</li>
+            <li style="color:#34d399;">Smile</li>
+            <li style="color:#60a5fa;">Mojo</li>
+          </ul>
         </aside>
         <!-- Recent Activity -->
         <article class="card col-7">
@@ -206,5 +206,71 @@
         activityList.appendChild(li);
       });
     }
+
+    /*
+     * Draw a dynamic donut chart for the bucket distribution. The original app
+     * drew its budget chart using a canvas with the ID `budget-chart`. Here we
+     * replicate that logic for the dashboard by drawing on the `gobux-donut`
+     * canvas. Values are taken from the global `lastBudget` object if
+     * available; if no budget has been calculated yet the chart remains
+     * empty. Colours match the legend entries defined in the HTML.
+     */
+    function drawDonut(canvasId, values) {
+      const canvas = document.getElementById(canvasId);
+      if(!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const segments = [
+        { value: values.splurge, colour: '#f87171' },
+        { value: values.bills,   colour: '#fde047' },
+        { value: values.fire,    colour: '#fb923c' },
+        { value: values.smile,   colour: '#34d399' },
+        { value: values.mojo,    colour: '#60a5fa' }
+      ];
+      const total = segments.reduce((sum, s) => sum + (s.value > 0 ? s.value : 0), 0);
+      // Clear previous drawing
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      if(total <= 0) return;
+      const cx = canvas.width / 2;
+      const cy = canvas.height / 2;
+      const radius = Math.min(canvas.width, canvas.height) * 0.45;
+      let start = -Math.PI / 2;
+      segments.forEach(seg => {
+        if(seg.value <= 0) return;
+        const angle = (seg.value / total) * 2 * Math.PI;
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.arc(cx, cy, radius, start, start + angle);
+        ctx.closePath();
+        ctx.fillStyle = seg.colour;
+        ctx.fill();
+        start += angle;
+      });
+      // Cut out centre to create donut effect. Use the card background to fill
+      const innerRadius = radius * 0.6;
+      ctx.beginPath();
+      ctx.arc(cx, cy, innerRadius, 0, 2 * Math.PI);
+      ctx.fillStyle = getComputedStyle(document.querySelector('.card')).backgroundColor || '#fff';
+      ctx.fill();
+    }
+
+    // Update the donut chart using the current lastBudget values if available.
+    function updateDonut(){
+      const lb = window.lastBudget;
+      if(lb && typeof lb === 'object'){
+        drawDonut('gobux-donut', {
+          splurge: lb.splurge ?? 0,
+          bills:   lb.bills_due ?? lb.billsAmt ?? 0,
+          fire:    lb.fire_amt ?? 0,
+          smile:   lb.smile_amt ?? 0,
+          mojo:    lb.mojo_amt ?? 0
+        });
+      }
+    }
+    // Draw initially on load
+    updateDonut();
+    // Redraw when the page becomes visible again (e.g., user switches tab)
+    document.addEventListener('visibilitychange', updateDonut);
+    // Poll once after a short delay in case the budget is calculated shortly after page load
+    setTimeout(updateDonut, 2000);
   });
 })();
