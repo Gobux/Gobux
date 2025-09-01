@@ -74,7 +74,7 @@
       </div>
       <div class="grid">
         <!-- Upcoming bills -->
-        <article class="card col-7">
+        <article class="card col-12">
           <h3>Upcoming Bills</h3>
           <table class="table">
             <thead><tr><th>Date</th><th>Bill</th><th class="num">Amount</th><th>Status</th></tr></thead>
@@ -84,7 +84,7 @@
           </table>
         </article>
         <!-- Buckets donut -->
-        <aside class="card col-5">
+        <aside class="card col-6">
           <h3>Buckets</h3>
           <p class="muted">Distribution</p>
           <!-- Canvas for dynamic donut chart -->
@@ -98,31 +98,27 @@
           </ul>
         </aside>
         <!-- Recent Activity -->
-        <article class="card col-7">
+        <article class="card col-6">
           <h3>Recent Activity</h3>
           <ul id="gobux-activity" style="margin:0; padding:0; list-style:none">
             <li class="muted">No recent activity</li>
           </ul>
         </article>
-        <!-- Goals & Debt -->
-        <aside class="card col-5">
-          <h3>Goals & Debt</h3>
-          <div style="display:grid; gap:12px">
-            <div>
-              <div class="muted">Debt progress</div>
-              <div style="height:10px; background:color-mix(in oklab, var(--ink) 5%, transparent); border-radius:999px; overflow:hidden">
-                <div style="width:${debtRatio}%; height:100%; background:var(--ok)"></div>
-              </div>
-              <small class="muted">${debtLabel}</small>
-            </div>
-            <div>
-              <div class="muted">Saving progress</div>
-              <div style="height:10px; background:color-mix(in oklab, var(--ink) 5%, transparent); border-radius:999px; overflow:hidden">
-                <div style="width:${saving}%; height:100%; background:var(--brand)"></div>
-              </div>
-              <small class="muted">${pct(saving)}</small>
-            </div>
+        <!-- Saving Progress -->
+        <aside class="card col-6">
+          <h3>Saving Progress</h3>
+          <div style="height:10px; background:color-mix(in oklab, var(--ink) 5%, transparent); border-radius:999px; overflow:hidden; margin-bottom:4px">
+            <div style="width:${saving}%; height:100%; background:var(--brand)"></div>
           </div>
+          <small class="muted">${pct(saving)} complete</small>
+        </aside>
+        <!-- Debt Progress -->
+        <aside class="card col-6">
+          <h3>Debt Progress</h3>
+          <div style="height:10px; background:color-mix(in oklab, var(--ink) 5%, transparent); border-radius:999px; overflow:hidden; margin-bottom:4px">
+            <div style="width:${debtRatio}%; height:100%; background:var(--ok)"></div>
+          </div>
+          <small class="muted">${debtLabel}</small>
         </aside>
       </div>
     `;

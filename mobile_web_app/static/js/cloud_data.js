@@ -187,13 +187,11 @@
 
   async function insertSnapshotCloud(snap) {
     const uid = await getUserId();
-    // Convert the snapshot keys to match the remote history table. In
-    // the local app we use `ts` for the timestamp. Supabase's
-    // history table stores this value in a `timestamp` column. Copy
-    // the value across accordingly. All other fields are passed
-    // through unchanged.
-    const { ts, ...rest } = snap;
-    const payload = { user_id: uid, timestamp: ts, ...rest };
+    // Insert the snapshot into the history table. The local snapshot
+    // object contains a `ts` property representing the timestamp.
+    // Many Supabase schemas for this project define a `ts` column in
+    // the history table, so we pass the snapshot through unchanged.
+    const payload = { user_id: uid, ...snap };
     const { error } = await supabase.from('history').insert(payload);
     if (error) {
       console.error(error);
