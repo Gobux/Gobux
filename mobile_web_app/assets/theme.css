@@ -145,4 +145,78 @@ body{
   /* Allow tables to scroll horizontally within their container so they do not force
      the entire page to scroll. On desktop screens, tables remain full width. */
   .table{ display:block; overflow-x:auto; width:100%; }
+
+  /*
+   * Stack the standard tables used in the Bills, Accounts and History sections
+   * into a vertical card‑like format on small screens. To preserve context,
+   * each cell uses a pseudo‑element to display its column heading. We hide
+   * the table header row entirely and display each row as its own block with
+   * the labels aligned on the left and values on the right. The actions cell
+   * remains at the bottom of each block. Adjust these selectors if column
+   * counts change in future updates.  
+   */
+  /* Hide table headers on small screens */
+  #bills-table thead,
+  #goals-table thead,
+  #debts-table thead,
+  #history-table thead{position:absolute; left:-9999px; top:-9999px; height:1px; width:1px; overflow:hidden;}
+
+  /* Display each row as a block and add spacing */
+  #bills-table tr,
+  #goals-table tr,
+  #debts-table tr,
+  #history-table tr{display:block; margin-bottom:var(--s3);}
+
+  /* Display cells as blocks with relative positioning for the label */
+  #bills-table td,
+  #goals-table td,
+  #debts-table td,
+  #history-table td{display:block; text-align:right; border:none; position:relative; padding-left:50%; white-space:pre-wrap;}
+
+  /* Position the pseudo labels on the left */
+  #bills-table td::before,
+  #goals-table td::before,
+  #debts-table td::before,
+  #history-table td::before{position:absolute; left:0; width:50%; padding-left:0; font-weight:600; text-align:left;}
+
+  /* Define labels for Bills table */
+  #bills-table td:nth-of-type(1)::before{content:'Name';}
+  #bills-table td:nth-of-type(2)::before{content:'Amount';}
+  #bills-table td:nth-of-type(3)::before{content:'Frequency';}
+  #bills-table td:nth-of-type(4)::before{content:'Start Date';}
+  #bills-table td:nth-of-type(5)::before{content:'Next Due';}
+  #bills-table td:nth-of-type(6)::before{content:'Actions';}
+
+  /* Define labels for Goals table */
+  #goals-table td:nth-of-type(1)::before{content:'Name';}
+  #goals-table td:nth-of-type(2)::before{content:'Target';}
+  #goals-table td:nth-of-type(3)::before{content:'Deadline';}
+  #goals-table td:nth-of-type(4)::before{content:'Priority';}
+  #goals-table td:nth-of-type(5)::before{content:'Saved';}
+  #goals-table td:nth-of-type(6)::before{content:'Progress';}
+  #goals-table td:nth-of-type(7)::before{content:'Actions';}
+
+  /* Define labels for Debts table */
+  #debts-table td:nth-of-type(1)::before{content:'Name';}
+  #debts-table td:nth-of-type(2)::before{content:'Owed';}
+  #debts-table td:nth-of-type(3)::before{content:'Min Payment';}
+  #debts-table td:nth-of-type(4)::before{content:'Interest %';}
+  #debts-table td:nth-of-type(5)::before{content:'Priority';}
+  #debts-table td:nth-of-type(6)::before{content:'Actions';}
+
+  /* Define labels for History table */
+  #history-table td:nth-of-type(1)::before{content:'Date';}
+  #history-table td:nth-of-type(2)::before{content:'Pay Cycle';}
+  #history-table td:nth-of-type(3)::before{content:'Income 1';}
+  #history-table td:nth-of-type(4)::before{content:'Income 2';}
+  #history-table td:nth-of-type(5)::before{content:'Splurge';}
+  #history-table td:nth-of-type(6)::before{content:'Bills';}
+  #history-table td:nth-of-type(7)::before{content:'Fire %';}
+  #history-table td:nth-of-type(8)::before{content:'Smile %';}
+  #history-table td:nth-of-type(9)::before{content:'Fire';}
+  #history-table td:nth-of-type(10)::before{content:'Smile';}
+  #history-table td:nth-of-type(11)::before{content:'Mojo';}
+  #history-table td:nth-of-type(12)::before{content:'Remaining';}
+  #history-table td:nth-of-type(13)::before{content:'Total';}
+  #history-table td:nth-of-type(14)::before{content:'Actions';}
 }

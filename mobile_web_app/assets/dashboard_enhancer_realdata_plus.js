@@ -256,14 +256,30 @@
     // Update the donut chart using the current lastBudget values if available.
     function updateDonut(){
       const lb = window.lastBudget;
+      let values = null;
       if(lb && typeof lb === 'object'){
-        drawDonut('gobux-donut', {
+        values = {
           splurge: lb.splurge ?? 0,
           bills:   lb.bills_due ?? lb.billsAmt ?? 0,
           fire:    lb.fire_amt ?? 0,
           smile:   lb.smile_amt ?? 0,
           mojo:    lb.mojo_amt ?? 0
-        });
+        };
+      } else if(history && history.length){
+        // Use the most recent snapshot from history when no current lastBudget is available
+        const lastSnap = history[history.length - 1];
+        if(lastSnap){
+          values = {
+            splurge: lastSnap.splurge ?? 0,
+            bills:   lastSnap.bills_due ?? 0,
+            fire:    lastSnap.fire_amt ?? 0,
+            smile:   lastSnap.smile_amt ?? 0,
+            mojo:    lastSnap.mojo_amt ?? 0
+          };
+        }
+      }
+      if(values){
+        drawDonut('gobux-donut', values);
       }
     }
     // Draw initially on load
