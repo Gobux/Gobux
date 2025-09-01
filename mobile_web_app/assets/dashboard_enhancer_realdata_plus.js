@@ -288,5 +288,13 @@
     document.addEventListener('visibilitychange', updateDonut);
     // Poll once after a short delay in case the budget is calculated shortly after page load
     setTimeout(updateDonut, 2000);
+
+    // Regularly poll for budget changes. Some operations in the app modify
+    // `lastBudget` or append to the history array asynchronously. Without
+    // hooking into those updates directly, polling ensures the donut chart
+    // refreshes whenever new budget data becomes available. The interval
+    // is modest (every 5 seconds) to avoid unnecessary redraws while still
+    // reflecting changes without needing a manual refresh.
+    setInterval(updateDonut, 5000);
   });
 })();
