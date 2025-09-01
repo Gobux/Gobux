@@ -187,11 +187,41 @@
 
   async function insertSnapshotCloud(snap) {
     const uid = await getUserId();
-    // Insert the snapshot into the history table. The local snapshot
-    // object contains a `ts` property representing the timestamp.
-    // Many Supabase schemas for this project define a `ts` column in
-    // the history table, so we pass the snapshot through unchanged.
-    const payload = { user_id: uid, ...snap };
+    // Extract fields from the local snapshot. The Supabase `history` table
+    // includes a `timestamp` column for the snapshot time. It also expects
+    // `bills` instead of `bills_due`. Only include known fields to avoid
+    // inserting columns that don't exist in the remote schema.
+    const {
+      ts,
+      pay_cycle,
+      income1,
+      income2,
+      splurge,
+      bills_due,
+      fire_pct,
+      smile_pct,
+      fire_amt,
+      smile_amt,
+      mojo_amt,
+      remaining,
+      total_income
+    } = snap;
+    const payload = {
+      user_id: uid,
+      timestamp: ts,
+      pay_cycle,
+      income1,
+      income2,
+      splurge,
+      bills: bills_due,
+      fire_pct,
+      smile_pct,
+      fire_amt,
+      smile_amt,
+      mojo_amt,
+      remaining,
+      total_income
+    };
     const { error } = await supabase.from('history').insert(payload);
     if (error) {
       console.error(error);
