@@ -1002,6 +1002,18 @@ function calculateBudget() {
     total_income: totalIncome
   };
 
+  // Expose the most recent budget on the global object. The
+  // dashboard enhancer script relies on window.lastBudget to
+  // determine the bucket allocations. Without this assignment,
+  // lastBudget is scoped to this module and cannot be read from
+  // other scripts. When the budget is recalculated, this value
+  // updates automatically.
+  try {
+    window.lastBudget = lastBudget;
+  } catch (e) {
+    // Ignore errors if window is not available (e.g. in tests)
+  }
+
   // Draw the donut chart to visually represent bucket allocations
   drawBudgetChart(splurge, billsDueAmount, fireAmt, smileAmt, mojoAmt);
   // Refresh dashboard to reflect the newly calculated budget
@@ -1024,7 +1036,14 @@ async function saveSnapshot() {
     }
   }
   // Reset temporary and disable snapshot button
+  // Reset temporary budget and clear the global mirror. Clearing
+  // window.lastBudget ensures that the dashboard enhancer falls
+  // back to the most recent snapshot from history if no new
+  // budget has been calculated. See dashboard_enhancer_realdata_plus.js
   lastBudget = null;
+  try {
+    window.lastBudget = null;
+  } catch (e) {}
   document.getElementById('btn-save-snapshot').disabled = true;
   alert('Snapshot saved to history.');
 }

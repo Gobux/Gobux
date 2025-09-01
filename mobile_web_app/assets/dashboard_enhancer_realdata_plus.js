@@ -296,5 +296,22 @@
     // is modest (every 5 seconds) to avoid unnecessary redraws while still
     // reflecting changes without needing a manual refresh.
     setInterval(updateDonut, 5000);
+
+    // Also hook into the app's renderDashboard function. Whenever the
+    // dashboard is redrawn (for example after data changes), we call
+    // updateDonut() to ensure the bucket chart is refreshed with the
+    // latest values. If no renderDashboard exists or has already been
+    // wrapped, skip this step.
+    if(typeof window.renderDashboard === 'function' && !window.__gobuxDashPlusWrapped){
+      const originalRender = window.renderDashboard;
+      window.renderDashboard = function(){
+        try {
+          return originalRender.apply(this, arguments);
+        } finally {
+          updateDonut();
+        }
+      };
+      window.__gobuxDashPlusWrapped = true;
+    }
   });
 })();
